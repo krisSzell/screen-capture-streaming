@@ -19,6 +19,7 @@ io.on("connection", socket => {
 	socket.emit("connected", "Connection established successfully!");
 
 	socket.on("mediaStream", dataChunk => {
-		console.log("Received data chunk: ", dataChunk);
+		console.log("Received data chunk");
+		io.sockets.emit("mediaStreamReceive", dataChunk);
 	});
 });

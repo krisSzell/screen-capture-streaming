@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { Container, AppBar, Tabs, Tab, Box } from "@material-ui/core";
 
 import { ScreenStreaming } from "./components/ScreenStreaming";
+import { ScreenRecording } from "./components/ScreenRecording";
+import { Screenshot } from "./components/Screenshot";
+import { WatchStream } from "./components/WatchStream";
 import { SocketContextConsumer } from ".";
 
 import "./App.scss";
-import { ScreenRecording } from "./components/ScreenRecording";
-import { Screenshot } from "./components/Screenshot";
 
 const a11yProps = index => ({
 	id: `app-tab-${index}`,
@@ -43,12 +44,13 @@ export const App = () => {
 						<Tab label="Screen Streaming" {...a11yProps(0)} />
 						<Tab label="Screen Recording" {...a11yProps(1)} />
 						<Tab label="Screenshot" {...a11yProps(2)} />
+						<Tab label="Watch stream" {...a11yProps(3)} />
 					</Tabs>
 				</Container>
 			</AppBar>
 			<Container className="App__body">
 				<SocketContextConsumer>
-					{({ socket }) => (
+					{socket => (
 						<>
 							<TabPanel value={activeTab} index={0}>
 								<ScreenStreaming socket={socket} />
@@ -58,6 +60,9 @@ export const App = () => {
 							</TabPanel>
 							<TabPanel value={activeTab} index={2}>
 								<Screenshot />
+							</TabPanel>
+							<TabPanel value={activeTab} index={3}>
+								<WatchStream socket={socket} />
 							</TabPanel>
 						</>
 					)}

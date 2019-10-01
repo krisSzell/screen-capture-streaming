@@ -4,9 +4,29 @@ import { Grid, Button } from "@material-ui/core";
 import { getCaptureStream, stopCaptureStream } from "../utils/screenCapture.utils";
 import "./ScreenStreaming.scss";
 
+const FPS = 25;
+
 export const ScreenStreaming = ({ socket }) => {
 	const [captureStream, setCaptureStream] = useState(null);
+	const [streamingIntervalId, setStreamingIntervalId] = useState(null);
 	const videoRef = useRef();
+
+	const getFrame = () => {
+		const canvas = document.createElement("canvas");
+		canvas.width = videoRef.current.videoWidth;
+		canvas.height = videoRef.current.videoHeight;
+		canvas.getContext("2d").drawImage(videoRef.current, 0, 0);
+
+		return canvas.toDataURL("image/png");
+	};
+
+	const streamToNode = () => {
+		setStreamingIntervalId(
+			setInterval(() => {
+				socket.emit("mediaStream", getFrame());
+			}, 1000 / FPS)
+		);
+	};
 
 	const startScreenStreaming = async () => {
 		try {
@@ -14,12 +34,16 @@ export const ScreenStreaming = ({ socket }) => {
 
 			setCaptureStream(stream);
 			videoRef.current && (videoRef.current.srcObject = stream);
+			streamToNode(stream);
 		} catch (error) {
 			console.log(error);
 		}
 	};
 
-	const stopScreenStreaming = () => stopCaptureStream(captureStream);
+	const stopScreenStreaming = () => {
+		clearInterval(streamingIntervalId);
+		stopCaptureStream(captureStream);
+	};
 
 	return (
 		<Grid container spacing={2} className="ScreenStreaming">

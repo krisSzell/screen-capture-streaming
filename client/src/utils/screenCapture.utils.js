@@ -87,7 +87,10 @@ export const recordScreencast = async () => {
 			mediaRecorder !== "inactive" && mediaRecorder.stop();
 		};
 
-		mediaRecorder.ondataavailable = event => chunks.push(event.data);
+		mediaRecorder.ondataavailable = event => {
+			console.log(event);
+			chunks.push(event.data);
+		};
 
 		return {
 			video: new Promise(resolve => {
